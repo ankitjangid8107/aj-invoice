@@ -101,6 +101,7 @@ const Index = () => {
               <Button variant="ghost" size="sm">
                 <Smartphone className="w-4 h-4 mr-1" /> UPI Receipt
             </Button>
+            </Link>
           </div>
           {/* Mobile toggle */}
           <div className="flex lg:hidden">

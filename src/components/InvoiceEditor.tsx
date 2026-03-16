@@ -39,6 +39,7 @@ interface Props {
   onNew: () => void;
   onExportPDF: () => void;
   onExportPNG: () => void;
+  onExportWord: () => void;
   onPrint: () => void;
   darkMode: boolean;
   onToggleDark: (v: boolean) => void;
@@ -46,7 +47,7 @@ interface Props {
 
 export default function InvoiceEditor({
   invoice, onUpdate, onSave, onExportJSON, onDuplicate, onNew,
-  onExportPDF, onExportPNG, onPrint, darkMode, onToggleDark,
+  onExportPDF, onExportPNG, onExportWord, onPrint, darkMode, onToggleDark,
 }: Props) {
   const logoRef = useRef<HTMLInputElement>(null);
   const sigRef = useRef<HTMLInputElement>(null);
@@ -94,6 +95,7 @@ export default function InvoiceEditor({
         <Button onClick={onExportPDF} variant="outline" size="sm" className="gap-1"><FileDown className="w-3.5 h-3.5" /> PDF</Button>
         <Button onClick={onExportPNG} variant="outline" size="sm" className="gap-1"><FileDown className="w-3.5 h-3.5" /> PNG</Button>
         <Button onClick={onPrint} variant="outline" size="sm" className="gap-1"><FileDown className="w-3.5 h-3.5" /> Print</Button>
+        <Button onClick={onExportWord} variant="outline" size="sm" className="gap-1"><FileDown className="w-3.5 h-3.5" /> Word</Button>
         <Button onClick={onExportJSON} variant="outline" size="sm" className="gap-1"><FileDown className="w-3.5 h-3.5" /> JSON</Button>
         <Button onClick={() => onToggleDark(!darkMode)} variant="ghost" size="sm">
           {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}

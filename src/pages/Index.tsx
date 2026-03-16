@@ -4,11 +4,13 @@ import InvoiceEditor from '@/components/InvoiceEditor';
 import InvoicePreview from '@/components/InvoicePreview';
 import SavedInvoicesList from '@/components/SavedInvoicesList';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, List, ChevronLeft } from 'lucide-react';
+import { FileText, List, Smartphone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { exportToWord } from '@/lib/exportWord';
+import { Link } from 'react-router-dom';
 
 type Panel = 'editor' | 'saved';
 
@@ -62,6 +64,14 @@ const Index = () => {
     setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
   }, [store.invoice.invoiceNumber]);
 
+  const handleExportWord = useCallback(async () => {
+    toast.info('Generating Word document...');
+    try {
+      await exportToWord(store.invoice);
+      toast.success('Word document exported!');
+    } catch { toast.error('Failed to export Word document'); }
+  }, [store.invoice]);
+
   const handleSave = useCallback(() => {
     store.saveInvoice();
     toast.success('Invoice saved!');
@@ -87,6 +97,11 @@ const Index = () => {
               className={panel === 'saved' ? 'btn-3d bg-primary text-primary-foreground' : ''}>
               <List className="w-4 h-4 mr-1" /> Saved ({store.savedInvoices.length})
             </Button>
+            <Link to="/payment-receipt">
+              <Button variant="ghost" size="sm">
+                <Smartphone className="w-4 h-4 mr-1" /> UPI Receipt
+            </Button>
+            </Link>
           </div>
           {/* Mobile toggle */}
           <div className="flex lg:hidden">
@@ -114,6 +129,7 @@ const Index = () => {
                 onExportPDF={handleExportPDF}
                 onExportPNG={handleExportPNG}
                 onPrint={handlePrint}
+                onExportWord={handleExportWord}
                 darkMode={store.darkMode}
                 onToggleDark={store.setDarkMode}
               />

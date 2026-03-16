@@ -64,6 +64,14 @@ const Index = () => {
     setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
   }, [store.invoice.invoiceNumber]);
 
+  const handleExportWord = useCallback(async () => {
+    toast.info('Generating Word document...');
+    try {
+      await exportToWord(store.invoice);
+      toast.success('Word document exported!');
+    } catch { toast.error('Failed to export Word document'); }
+  }, [store.invoice]);
+
   const handleSave = useCallback(() => {
     store.saveInvoice();
     toast.success('Invoice saved!');

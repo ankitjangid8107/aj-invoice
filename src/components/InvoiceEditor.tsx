@@ -39,6 +39,7 @@ interface Props {
   onNew: () => void;
   onExportPDF: () => void;
   onExportPNG: () => void;
+  onExportWord: () => void;
   onPrint: () => void;
   darkMode: boolean;
   onToggleDark: (v: boolean) => void;
@@ -46,7 +47,7 @@ interface Props {
 
 export default function InvoiceEditor({
   invoice, onUpdate, onSave, onExportJSON, onDuplicate, onNew,
-  onExportPDF, onExportPNG, onPrint, darkMode, onToggleDark,
+  onExportPDF, onExportPNG, onExportWord, onPrint, darkMode, onToggleDark,
 }: Props) {
   const logoRef = useRef<HTMLInputElement>(null);
   const sigRef = useRef<HTMLInputElement>(null);

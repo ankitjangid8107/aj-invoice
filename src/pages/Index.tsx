@@ -97,6 +97,10 @@ const Index = () => {
               className={panel === 'saved' ? 'btn-3d bg-primary text-primary-foreground' : ''}>
               <List className="w-4 h-4 mr-1" /> Saved ({store.savedInvoices.length})
             </Button>
+            <Link to="/payment-receipt">
+              <Button variant="ghost" size="sm">
+                <Smartphone className="w-4 h-4 mr-1" /> UPI Receipt
+            </Button>
           </div>
           {/* Mobile toggle */}
           <div className="flex lg:hidden">

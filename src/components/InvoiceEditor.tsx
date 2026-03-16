@@ -6,7 +6,29 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, Trash2, Upload, Save, FileDown, Copy, FilePlus, Moon, Sun } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, memo, useCallback } from 'react';
+
+const Section = memo(({ title, children }: { title: string; children: React.ReactNode }) => (
+  <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="glass-panel rounded-xl p-4 space-y-3">
+    <h3 className="text-sm font-semibold text-primary uppercase tracking-wider">{title}</h3>
+    {children}
+  </motion.div>
+));
+Section.displayName = 'Section';
+
+const Field = memo(({ label, value, onChange, textarea, type = 'text' }: {
+  label: string; value: string | number; onChange: (v: string) => void; textarea?: boolean; type?: string;
+}) => (
+  <div className="space-y-1">
+    <Label className="text-xs text-muted-foreground">{label}</Label>
+    {textarea ? (
+      <Textarea value={value} onChange={e => onChange(e.target.value)} className="text-sm min-h-[60px] bg-secondary/50" />
+    ) : (
+      <Input type={type} value={value} onChange={e => onChange(e.target.value)} className="text-sm h-8 bg-secondary/50" />
+    )}
+  </div>
+));
+Field.displayName = 'Field';
 
 interface Props {
   invoice: InvoiceData;
@@ -29,58 +51,38 @@ export default function InvoiceEditor({
   const logoRef = useRef<HTMLInputElement>(null);
   const sigRef = useRef<HTMLInputElement>(null);
 
-  const handleLogo = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogo = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => onUpdate({ companyLogo: reader.result as string });
     reader.readAsDataURL(file);
-  };
+  }, [onUpdate]);
 
-  const handleSig = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSig = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => onUpdate({ signatureImage: reader.result as string });
     reader.readAsDataURL(file);
-  };
+  }, [onUpdate]);
 
-  const addItem = () => {
+  const addItem = useCallback(() => {
     const newItem: InvoiceItem = {
       id: crypto.randomUUID(), description: '', hsn: '',
       quantity: 1, unitPrice: 0, discount: 0, taxType: 'IGST', taxRate: 0,
     };
     onUpdate({ items: [...invoice.items, newItem] });
-  };
+  }, [invoice.items, onUpdate]);
 
-  const removeItem = (id: string) => {
+  const removeItem = useCallback((id: string) => {
     if (invoice.items.length <= 1) return;
     onUpdate({ items: invoice.items.filter(i => i.id !== id) });
-  };
+  }, [invoice.items, onUpdate]);
 
-  const updateItem = (id: string, updates: Partial<InvoiceItem>) => {
+  const updateItem = useCallback((id: string, updates: Partial<InvoiceItem>) => {
     onUpdate({ items: invoice.items.map(i => i.id === id ? { ...i, ...updates } : i) });
-  };
-
-  const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
-    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="glass-panel rounded-xl p-4 space-y-3">
-      <h3 className="text-sm font-semibold text-primary uppercase tracking-wider">{title}</h3>
-      {children}
-    </motion.div>
-  );
-
-  const Field = ({ label, value, onChange, textarea, type = 'text' }: {
-    label: string; value: string | number; onChange: (v: string) => void; textarea?: boolean; type?: string;
-  }) => (
-    <div className="space-y-1">
-      <Label className="text-xs text-muted-foreground">{label}</Label>
-      {textarea ? (
-        <Textarea value={value} onChange={e => onChange(e.target.value)} className="text-sm min-h-[60px] bg-secondary/50" />
-      ) : (
-        <Input type={type} value={value} onChange={e => onChange(e.target.value)} className="text-sm h-8 bg-secondary/50" />
-      )}
-    </div>
-  );
+  }, [invoice.items, onUpdate]);
 
   return (
     <div className="space-y-4 p-4 overflow-y-auto max-h-screen">

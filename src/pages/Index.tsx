@@ -4,11 +4,13 @@ import InvoiceEditor from '@/components/InvoiceEditor';
 import InvoicePreview from '@/components/InvoicePreview';
 import SavedInvoicesList from '@/components/SavedInvoicesList';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, List, ChevronLeft } from 'lucide-react';
+import { FileText, List, Smartphone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { exportToWord } from '@/lib/exportWord';
+import { Link } from 'react-router-dom';
 
 type Panel = 'editor' | 'saved';
 

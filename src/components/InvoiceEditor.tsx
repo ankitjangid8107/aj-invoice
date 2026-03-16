@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, Trash2, Upload, Save, FileDown, Copy, FilePlus, Moon, Sun } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useRef, memo } from 'react';
+import { useRef, memo, useCallback } from 'react';
 
 const Section = memo(({ title, children }: { title: string; children: React.ReactNode }) => (
   <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="glass-panel rounded-xl p-4 space-y-3">
@@ -31,6 +31,58 @@ const Field = memo(({ label, value, onChange, textarea, type = 'text' }: {
 Field.displayName = 'Field';
 
 interface Props {
+  invoice: InvoiceData;
+  onUpdate: (updates: Partial<InvoiceData>) => void;
+  onSave: () => void;
+  onExportJSON: () => void;
+  onDuplicate: () => void;
+  onNew: () => void;
+  onExportPDF: () => void;
+  onExportPNG: () => void;
+  onPrint: () => void;
+  darkMode: boolean;
+  onToggleDark: (v: boolean) => void;
+}
+
+export default function InvoiceEditor({
+  invoice, onUpdate, onSave, onExportJSON, onDuplicate, onNew,
+  onExportPDF, onExportPNG, onPrint, darkMode, onToggleDark,
+}: Props) {
+  const logoRef = useRef<HTMLInputElement>(null);
+  const sigRef = useRef<HTMLInputElement>(null);
+
+  const handleLogo = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => onUpdate({ companyLogo: reader.result as string });
+    reader.readAsDataURL(file);
+  }, [onUpdate]);
+
+  const handleSig = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => onUpdate({ signatureImage: reader.result as string });
+    reader.readAsDataURL(file);
+  }, [onUpdate]);
+
+  const addItem = useCallback(() => {
+    const newItem: InvoiceItem = {
+      id: crypto.randomUUID(), description: '', hsn: '',
+      quantity: 1, unitPrice: 0, discount: 0, taxType: 'IGST', taxRate: 0,
+    };
+    onUpdate({ items: [...invoice.items, newItem] });
+  }, [invoice.items, onUpdate]);
+
+  const removeItem = useCallback((id: string) => {
+    if (invoice.items.length <= 1) return;
+    onUpdate({ items: invoice.items.filter(i => i.id !== id) });
+  }, [invoice.items, onUpdate]);
+
+  const updateItem = useCallback((id: string, updates: Partial<InvoiceItem>) => {
+    onUpdate({ items: invoice.items.map(i => i.id === id ? { ...i, ...updates } : i) });
+  }, [invoice.items, onUpdate]);
 
   return (
     <div className="space-y-4 p-4 overflow-y-auto max-h-screen">

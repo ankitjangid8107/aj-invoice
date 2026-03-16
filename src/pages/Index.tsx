@@ -129,6 +129,7 @@ const Index = () => {
                 onExportPDF={handleExportPDF}
                 onExportPNG={handleExportPNG}
                 onPrint={handlePrint}
+                onExportWord={handleExportWord}
                 darkMode={store.darkMode}
                 onToggleDark={store.setDarkMode}
               />

@@ -51,6 +51,7 @@ export interface InvoiceData {
 
 export const defaultInvoice: InvoiceData = {
   id: crypto.randomUUID(),
+  soldBy: '',
   companyName: 'Your Company Name',
   companyLogo: '',
   companyAddress: 'Your Company Address\nCity, State, PIN',

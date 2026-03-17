@@ -33,7 +33,7 @@ interface Props {
   onExportPDF: () => void;
 }
 
-export default function PaymentReceiptEditor({ receipt, onUpdate, onExportPNG, onExportPDF }: Props) {
+export default function PaymentReceiptEditor({ receipt, onUpdate, onExportPNG, onExportJPG, onExportPDF }: Props) {
   const senderAvatarRef = useRef<HTMLInputElement>(null);
   const receiverIconRef = useRef<HTMLInputElement>(null);
 

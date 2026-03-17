@@ -29,6 +29,7 @@ interface Props {
   receipt: PaymentReceiptData;
   onUpdate: (updates: Partial<PaymentReceiptData>) => void;
   onExportPNG: () => void;
+  onExportJPG: () => void;
   onExportPDF: () => void;
 }
 

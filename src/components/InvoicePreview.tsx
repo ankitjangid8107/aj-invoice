@@ -34,6 +34,7 @@ const InvoicePreview = forwardRef<HTMLDivElement, Props>(({ invoice }, ref) => {
       <div className="grid grid-cols-2 gap-4 mb-3">
         <div>
           <div className="font-bold text-[10px] mb-1">Sold By :</div>
+          {invoice.soldBy && <div className="text-[10px] mb-1">{invoice.soldBy}</div>}
           <div className="font-semibold">{invoice.companyName}</div>
           <div className="whitespace-pre-line text-[10px]">{invoice.companyAddress}</div>
           <div className="mt-2 text-[10px]">

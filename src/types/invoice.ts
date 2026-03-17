@@ -12,6 +12,7 @@ export interface InvoiceItem {
 export interface InvoiceData {
   id: string;
   // Company / Seller
+  soldBy: string;
   companyName: string;
   companyLogo: string;
   companyAddress: string;

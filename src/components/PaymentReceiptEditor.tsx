@@ -50,10 +50,13 @@ export default function PaymentReceiptEditor({ receipt, onUpdate, onExportPNG, o
       {/* Export Actions */}
       <div className="flex flex-wrap gap-2">
         <Button onClick={onExportPNG} variant="outline" size="sm" className="gap-1">
-          <FileImage className="w-3.5 h-3.5" /> Export PNG
+          <FileImage className="w-3.5 h-3.5" /> PNG
+        </Button>
+        <Button onClick={onExportJPG} variant="outline" size="sm" className="gap-1">
+          <FileImage className="w-3.5 h-3.5" /> JPG
         </Button>
         <Button onClick={onExportPDF} variant="outline" size="sm" className="gap-1">
-          <Download className="w-3.5 h-3.5" /> Export PDF
+          <Download className="w-3.5 h-3.5" /> PDF
         </Button>
       </div>
 

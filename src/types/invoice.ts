@@ -12,6 +12,7 @@ export interface InvoiceItem {
 export interface InvoiceData {
   id: string;
   // Company / Seller
+  soldBy: string;
   companyName: string;
   companyLogo: string;
   companyAddress: string;
@@ -50,6 +51,7 @@ export interface InvoiceData {
 
 export const defaultInvoice: InvoiceData = {
   id: crypto.randomUUID(),
+  soldBy: '',
   companyName: 'Your Company Name',
   companyLogo: '',
   companyAddress: 'Your Company Address\nCity, State, PIN',

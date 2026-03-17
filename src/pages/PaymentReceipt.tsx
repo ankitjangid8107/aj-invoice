@@ -6,8 +6,7 @@ import { motion } from 'framer-motion';
 import { Smartphone, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+import { exportPNG, exportJPG, exportReceiptPDF } from '@/lib/exportUtils';
 import { Link } from 'react-router-dom';
 
 const PaymentReceipt = () => {
@@ -23,12 +22,17 @@ const PaymentReceipt = () => {
     if (!previewRef.current) return;
     toast.info('Generating PNG...');
     try {
-      const canvas = await html2canvas(previewRef.current, { scale: 3, useCORS: true, backgroundColor: '#ffffff' });
-      const link = document.createElement('a');
-      link.download = `payment_${receipt.transactionId}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
+      await exportPNG(previewRef.current, `payment_${receipt.transactionId}.png`);
       toast.success('PNG exported!');
+    } catch { toast.error('Export failed'); }
+  }, [receipt.transactionId]);
+
+  const handleExportJPG = useCallback(async () => {
+    if (!previewRef.current) return;
+    toast.info('Generating JPG...');
+    try {
+      await exportJPG(previewRef.current, `payment_${receipt.transactionId}.jpg`);
+      toast.success('JPG exported!');
     } catch { toast.error('Export failed'); }
   }, [receipt.transactionId]);
 
@@ -36,11 +40,7 @@ const PaymentReceipt = () => {
     if (!previewRef.current) return;
     toast.info('Generating PDF...');
     try {
-      const canvas = await html2canvas(previewRef.current, { scale: 3, useCORS: true, backgroundColor: '#ffffff' });
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', [100, (canvas.height * 100) / canvas.width]);
-      pdf.addImage(imgData, 'PNG', 0, 0, 100, (canvas.height * 100) / canvas.width);
-      pdf.save(`payment_${receipt.transactionId}.pdf`);
+      await exportReceiptPDF(previewRef.current, `payment_${receipt.transactionId}.pdf`);
       toast.success('PDF exported!');
     } catch { toast.error('Export failed'); }
   }, [receipt.transactionId]);
@@ -78,6 +78,7 @@ const PaymentReceipt = () => {
             receipt={receipt}
             onUpdate={updateReceipt}
             onExportPNG={handleExportPNG}
+            onExportJPG={handleExportJPG}
             onExportPDF={handleExportPDF}
           />
         </motion.div>

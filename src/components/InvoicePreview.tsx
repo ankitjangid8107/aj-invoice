@@ -17,11 +17,12 @@ const InvoicePreview = forwardRef<HTMLDivElement, Props>(({ invoice }, ref) => {
       {/* Header */}
       <div className="flex justify-between items-start border-b border-gray-300 pb-3 mb-3">
         <div className="flex-1">
-          {invoice.companyLogo ? (
-            <img src={invoice.companyLogo} alt="Logo" className="h-12 mb-1 object-contain" />
-          ) : (
+          <div className="flex items-center gap-3 mb-1">
+            {invoice.companyLogo && (
+              <img src={invoice.companyLogo} alt="Logo" className="h-12 object-contain" />
+            )}
             <div className="text-lg font-bold text-gray-800">{invoice.companyName}</div>
-          )}
+          </div>
         </div>
         <div className="text-right">
           <div className="text-base font-bold">Tax Invoice/Bill of Supply/Cash Memo</div>
@@ -33,6 +34,7 @@ const InvoicePreview = forwardRef<HTMLDivElement, Props>(({ invoice }, ref) => {
       <div className="grid grid-cols-2 gap-4 mb-3">
         <div>
           <div className="font-bold text-[10px] mb-1">Sold By :</div>
+          {invoice.soldBy && <div className="text-[10px] mb-1">{invoice.soldBy}</div>}
           <div className="font-semibold">{invoice.companyName}</div>
           <div className="whitespace-pre-line text-[10px]">{invoice.companyAddress}</div>
           <div className="mt-2 text-[10px]">

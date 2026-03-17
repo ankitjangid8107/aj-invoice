@@ -104,6 +104,7 @@ export default function InvoiceEditor({
 
       {/* Company */}
       <Section title="Company / Seller">
+        <Field label="Sold By" value={invoice.soldBy} onChange={v => onUpdate({ soldBy: v })} />
         <div className="flex gap-2 items-end">
           <div className="flex-1">
             <Field label="Company Name" value={invoice.companyName} onChange={v => onUpdate({ companyName: v })} />

@@ -7,8 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FileText, List, Smartphone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+import { exportPNG, exportPDF } from '@/lib/exportUtils';
 import { exportToWord } from '@/lib/exportWord';
 import { Link } from 'react-router-dom';
 
@@ -24,13 +23,7 @@ const Index = () => {
     if (!previewRef.current) return;
     toast.info('Generating PDF...');
     try {
-      const canvas = await html2canvas(previewRef.current, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const w = pdf.internal.pageSize.getWidth();
-      const h = (canvas.height * w) / canvas.width;
-      pdf.addImage(imgData, 'PNG', 0, 0, w, h);
-      pdf.save(`${store.invoice.invoiceNumber}.pdf`);
+      await exportPDF(previewRef.current, `${store.invoice.invoiceNumber}.pdf`);
       toast.success('PDF exported!');
     } catch { toast.error('Failed to export PDF'); }
   }, [store.invoice.invoiceNumber]);
@@ -39,11 +32,7 @@ const Index = () => {
     if (!previewRef.current) return;
     toast.info('Generating PNG...');
     try {
-      const canvas = await html2canvas(previewRef.current, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
-      const link = document.createElement('a');
-      link.download = `${store.invoice.invoiceNumber}.png`;
-      link.href = canvas.toDataURL();
-      link.click();
+      await exportPNG(previewRef.current, `${store.invoice.invoiceNumber}.png`);
       toast.success('PNG exported!');
     } catch { toast.error('Failed to export PNG'); }
   }, [store.invoice.invoiceNumber]);

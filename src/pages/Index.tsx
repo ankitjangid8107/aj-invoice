@@ -1,43 +1,48 @@
 import { useRef, useState, useCallback } from 'react';
-import { useInvoiceStore } from '@/hooks/useInvoiceStore';
+import { useCloudInvoiceStore } from '@/hooks/useCloudInvoiceStore';
+import { useAuth } from '@/contexts/AuthContext';
 import InvoiceEditor from '@/components/InvoiceEditor';
 import InvoicePreview from '@/components/InvoicePreview';
 import SavedInvoicesList from '@/components/SavedInvoicesList';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, List, Smartphone } from 'lucide-react';
+import { FileText, List, Smartphone, User, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { exportPNG, exportPDF } from '@/lib/exportUtils';
 import { exportToWord } from '@/lib/exportWord';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 
 type Panel = 'editor' | 'saved';
 
 const Index = () => {
-  const store = useInvoiceStore();
+  const { user, profile, loading, signOut } = useAuth();
+  const store = useCloudInvoiceStore();
   const previewRef = useRef<HTMLDivElement>(null);
   const [panel, setPanel] = useState<Panel>('editor');
   const [mobileView, setMobileView] = useState<'edit' | 'preview'>('edit');
 
-  const handleExportPDF = useCallback(async () => {
+  if (loading) return <div className="min-h-screen flex items-center justify-center bg-background"><div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" /></div>;
+  if (!user) return <Navigate to="/auth" replace />;
+
+  const handleExportPDF = async () => {
     if (!previewRef.current) return;
     toast.info('Generating PDF...');
     try {
       await exportPDF(previewRef.current, `${store.invoice.invoiceNumber}.pdf`);
       toast.success('PDF exported!');
     } catch { toast.error('Failed to export PDF'); }
-  }, [store.invoice.invoiceNumber]);
+  };
 
-  const handleExportPNG = useCallback(async () => {
+  const handleExportPNG = async () => {
     if (!previewRef.current) return;
     toast.info('Generating PNG...');
     try {
       await exportPNG(previewRef.current, `${store.invoice.invoiceNumber}.png`);
       toast.success('PNG exported!');
     } catch { toast.error('Failed to export PNG'); }
-  }, [store.invoice.invoiceNumber]);
+  };
 
-  const handlePrint = useCallback(() => {
+  const handlePrint = () => {
     const printWindow = window.open('', '_blank');
     if (!printWindow || !previewRef.current) return;
     printWindow.document.write(`
@@ -51,24 +56,23 @@ const Index = () => {
     `);
     printWindow.document.close();
     setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
-  }, [store.invoice.invoiceNumber]);
+  };
 
-  const handleExportWord = useCallback(async () => {
+  const handleExportWord = async () => {
     toast.info('Generating Word document...');
     try {
       await exportToWord(store.invoice);
       toast.success('Word document exported!');
     } catch { toast.error('Failed to export Word document'); }
-  }, [store.invoice]);
+  };
 
-  const handleSave = useCallback(() => {
-    store.saveInvoice();
-    toast.success('Invoice saved!');
-  }, [store]);
+  const handleSave = async () => {
+    await store.saveInvoice();
+    toast.success('Invoice saved to cloud! (expires in 2 days)');
+  };
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="sticky top-0 z-50 glass-panel-strong border-b border-border/50">
         <div className="flex items-center justify-between px-4 h-14">
           <div className="flex items-center gap-2">
@@ -77,22 +81,27 @@ const Index = () => {
             </div>
             <h1 className="text-lg font-bold gradient-text hidden sm:block">InvoicePro</h1>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             <Button variant={panel === 'editor' ? 'default' : 'ghost'} size="sm" onClick={() => setPanel('editor')}
               className={panel === 'editor' ? 'btn-3d bg-primary text-primary-foreground' : ''}>
-              <FileText className="w-4 h-4 mr-1" /> Editor
+              <FileText className="w-4 h-4 mr-1" /> <span className="hidden sm:inline">Editor</span>
             </Button>
             <Button variant={panel === 'saved' ? 'default' : 'ghost'} size="sm" onClick={() => setPanel('saved')}
               className={panel === 'saved' ? 'btn-3d bg-primary text-primary-foreground' : ''}>
-              <List className="w-4 h-4 mr-1" /> Saved ({store.savedInvoices.length})
+              <List className="w-4 h-4 mr-1" /> <span className="hidden sm:inline">Saved ({store.savedInvoices.length})</span>
             </Button>
             <Link to="/payment-receipt">
               <Button variant="ghost" size="sm">
-                <Smartphone className="w-4 h-4 mr-1" /> UPI Receipt
-            </Button>
+                <Smartphone className="w-4 h-4 mr-1" /> <span className="hidden sm:inline">UPI</span>
+              </Button>
+            </Link>
+            <Link to="/profile">
+              <Button variant="ghost" size="sm" className="gap-1">
+                <User className="w-4 h-4" />
+                <span className="hidden sm:inline truncate max-w-[80px]">{profile?.full_name || 'Profile'}</span>
+              </Button>
             </Link>
           </div>
-          {/* Mobile toggle */}
           <div className="flex lg:hidden">
             <Button variant="outline" size="sm" onClick={() => setMobileView(v => v === 'edit' ? 'preview' : 'edit')}>
               {mobileView === 'edit' ? 'Preview' : 'Edit'}
@@ -102,7 +111,6 @@ const Index = () => {
       </header>
 
       <div className="flex flex-1">
-        {/* Left Panel */}
         <AnimatePresence mode="wait">
           <motion.div key={panel} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
             className={`w-full lg:w-[420px] xl:w-[460px] shrink-0 border-r border-border/50 bg-card/30 overflow-y-auto ${mobileView === 'preview' ? 'hidden lg:block' : ''}`}
@@ -126,13 +134,12 @@ const Index = () => {
               <SavedInvoicesList
                 invoices={store.savedInvoices}
                 onLoad={(id) => { store.loadInvoice(id); setPanel('editor'); toast.success('Invoice loaded!'); }}
-                onDelete={(id) => { store.deleteInvoice(id); toast.success('Invoice deleted!'); }}
+                onDelete={async (id) => { await store.deleteInvoice(id); toast.success('Invoice deleted!'); }}
               />
             )}
           </motion.div>
         </AnimatePresence>
 
-        {/* Right Panel - Preview */}
         <div className={`flex-1 overflow-y-auto bg-muted/30 ${mobileView === 'edit' ? 'hidden lg:block' : ''}`}
           style={{ height: 'calc(100vh - 56px)' }}>
           <div className="p-4 lg:p-8 flex justify-center">

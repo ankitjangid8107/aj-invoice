@@ -68,7 +68,7 @@ const Index = () => {
 
   const handleSave = async () => {
     await store.saveInvoice();
-    toast.success('Invoice saved to cloud! (expires in 2 days)');
+    toast.success(store.isAdmin ? 'Invoice saved permanently!' : `Invoice saved! (expires in ${store.saveDays} days)`);
   };
 
   return (

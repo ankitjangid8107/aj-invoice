@@ -4,11 +4,15 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
-import Index from "./pages/Index.tsx";
-import PaymentReceipt from "./pages/PaymentReceipt.tsx";
-import Auth from "./pages/Auth.tsx";
-import Profile from "./pages/Profile.tsx";
-import NotFound from "./pages/NotFound.tsx";
+import Landing from "./pages/Landing";
+import Index from "./pages/Index";
+import PaymentReceipt from "./pages/PaymentReceipt";
+import TicketEditor from "./pages/TicketEditor";
+import Auth from "./pages/Auth";
+import Profile from "./pages/Profile";
+import Admin from "./pages/Admin";
+import SEOPages from "./pages/SEOPages";
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
@@ -20,10 +24,17 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<Landing />} />
+            <Route path="/dashboard" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/payment-receipt" element={<PaymentReceipt />} />
+            <Route path="/ticket-editor" element={<TicketEditor />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/privacy" element={<SEOPages />} />
+            <Route path="/terms" element={<SEOPages />} />
+            <Route path="/refund" element={<SEOPages />} />
+            <Route path="/contact" element={<SEOPages />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

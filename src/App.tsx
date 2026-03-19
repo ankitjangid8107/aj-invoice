@@ -32,11 +32,11 @@ const App = () => (
             <Route path="/payment-receipt" element={<PaymentReceipt />} />
             <Route path="/ticket-editor" element={<TicketEditor />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/subscription" element={<Subscription />} />
             <Route path="/privacy" element={<SEOPages />} />
             <Route path="/terms" element={<SEOPages />} />
             <Route path="/refund" element={<SEOPages />} />
             <Route path="/contact" element={<SEOPages />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

@@ -7,7 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { ArrowLeft, Users, Settings, FileText, Shield, Search } from 'lucide-react';
+import { ArrowLeft, Users, Settings, FileText, Shield, Search, CreditCard } from 'lucide-react';
+import AdminPricingManager from '@/components/AdminPricingManager';
 
 interface UserProfile {
   user_id: string;

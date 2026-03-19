@@ -15,15 +15,16 @@ const features = [
   { icon: Smartphone, title: 'Mobile Optimized', desc: 'Works perfectly on iOS & Android. Download bills on any device.' },
 ];
 
-const plans = [
-  { name: 'Free', price: '₹0', period: '/forever', features: ['3 Invoices/month', '20-day save', 'PDF & PNG export', 'Basic templates'], cta: 'Get Started', popular: false },
-  { name: 'Pro', price: '₹199', period: '/month', features: ['Unlimited Invoices', '90-day save', 'All export formats', 'Premium templates', 'Priority support'], cta: 'Subscribe Now', popular: true },
-  { name: 'Business', price: '₹499', period: '/month', features: ['Everything in Pro', 'Forever save', 'Multi-company', 'Custom branding', 'API access', 'Dedicated support'], cta: 'Contact Sales', popular: false },
-];
+interface DynPlan { id: string; name: string; price: number; period: string; features: string[]; popular: boolean; }
 
 export default function Landing() {
   const { user } = useAuth();
+  const [plans, setPlans] = useState<DynPlan[]>([]);
 
+  useEffect(() => {
+    supabase.from('pricing_plans').select('*').eq('is_active', true).order('sort_order')
+      .then(({ data }) => { if (data) setPlans(data.map(p => ({ ...p, features: (p.features as any) || [] }))); });
+  }, []);
   return (
     <div className="min-h-screen bg-background">
       {/* Nav */}

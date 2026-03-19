@@ -34,6 +34,12 @@ export default function Subscription() {
       .then(({ data }) => { if (data) setCurrentPlan(data.plan); });
   }, [user]);
 
+  useEffect(() => {
+    supabase.from('pricing_plans').select('*').eq('is_active', true).order('sort_order')
+      .then(({ data }) => { if (data) setPlans(data.map(p => ({ ...p, features: (p.features as any) || [] }))); });
+  }, []);
+  }, [user]);
+
   // Load Razorpay script
   useEffect(() => {
     if (document.getElementById('razorpay-script')) return;

@@ -7,7 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { ArrowLeft, Users, Settings, FileText, Shield, Search } from 'lucide-react';
+import { ArrowLeft, Users, Settings, FileText, Shield, Search, CreditCard } from 'lucide-react';
+import AdminPricingManager from '@/components/AdminPricingManager';
 
 interface UserProfile {
   user_id: string;
@@ -111,6 +112,7 @@ export default function Admin() {
           <TabsList className="mb-4">
             <TabsTrigger value="users" className="gap-1"><Users className="w-4 h-4" /> Users</TabsTrigger>
             <TabsTrigger value="settings" className="gap-1"><Settings className="w-4 h-4" /> Site Settings</TabsTrigger>
+            <TabsTrigger value="pricing" className="gap-1"><CreditCard className="w-4 h-4" /> Pricing</TabsTrigger>
             <TabsTrigger value="seo" className="gap-1"><FileText className="w-4 h-4" /> SEO & Ads</TabsTrigger>
           </TabsList>
 
@@ -176,6 +178,10 @@ export default function Admin() {
                 </div>
               </div>
             </div>
+          </TabsContent>
+
+          <TabsContent value="pricing">
+            <AdminPricingManager />
           </TabsContent>
 
           <TabsContent value="seo" className="space-y-6">

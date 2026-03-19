@@ -1,8 +1,10 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { FileText, CreditCard, Ticket, Shield, Cloud, Smartphone, ArrowRight, Check } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 
 const features = [
   { icon: FileText, title: 'Invoice Generator', desc: 'Create professional GST invoices with Amazon-style templates. Export to PDF, PNG, Word.' },
@@ -13,15 +15,16 @@ const features = [
   { icon: Smartphone, title: 'Mobile Optimized', desc: 'Works perfectly on iOS & Android. Download bills on any device.' },
 ];
 
-const plans = [
-  { name: 'Free', price: '₹0', period: '/forever', features: ['3 Invoices/month', '20-day save', 'PDF & PNG export', 'Basic templates'], cta: 'Get Started', popular: false },
-  { name: 'Pro', price: '₹199', period: '/month', features: ['Unlimited Invoices', '90-day save', 'All export formats', 'Premium templates', 'Priority support'], cta: 'Subscribe Now', popular: true },
-  { name: 'Business', price: '₹499', period: '/month', features: ['Everything in Pro', 'Forever save', 'Multi-company', 'Custom branding', 'API access', 'Dedicated support'], cta: 'Contact Sales', popular: false },
-];
+interface DynPlan { id: string; name: string; price: number; period: string; features: string[]; popular: boolean; }
 
 export default function Landing() {
   const { user } = useAuth();
+  const [plans, setPlans] = useState<DynPlan[]>([]);
 
+  useEffect(() => {
+    supabase.from('pricing_plans').select('*').eq('is_active', true).order('sort_order')
+      .then(({ data }) => { if (data) setPlans(data.map(p => ({ ...p, features: (p.features as any) || [] }))); });
+  }, []);
   return (
     <div className="min-h-screen bg-background">
       {/* Nav */}
@@ -117,7 +120,7 @@ export default function Landing() {
                 {plan.popular && <span className="inline-block text-xs font-bold text-primary bg-primary/10 rounded-full px-3 py-1 mb-3">Most Popular</span>}
                 <h3 className="text-xl font-bold">{plan.name}</h3>
                 <div className="mt-3 mb-6">
-                  <span className="text-4xl font-extrabold">{plan.price}</span>
+                  <span className="text-4xl font-extrabold">₹{plan.price}</span>
                   <span className="text-muted-foreground">{plan.period}</span>
                 </div>
                 <ul className="space-y-3 mb-6">
@@ -127,7 +130,7 @@ export default function Landing() {
                 </ul>
                 <Link to={user ? "/subscription" : "/auth"}>
                   <Button className={`w-full ${plan.popular ? 'btn-3d bg-primary text-primary-foreground' : ''}`} variant={plan.popular ? 'default' : 'outline'}>
-                    {plan.cta}
+                    {plan.price === 0 ? 'Get Started' : plan.popular ? 'Subscribe Now' : 'Subscribe'}
                   </Button>
                 </Link>
               </motion.div>

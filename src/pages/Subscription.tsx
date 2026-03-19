@@ -13,16 +13,25 @@ declare global {
   }
 }
 
-const plans = [
-  { id: 'free', name: 'Free', price: 0, period: '/forever', features: ['3 Invoices/month', '20-day save', 'PDF & PNG export', 'Basic templates'], popular: false },
-  { id: 'pro', name: 'Pro', price: 199, period: '/month', features: ['Unlimited Invoices', '90-day save', 'All export formats', 'Premium templates', 'Priority support'], popular: true },
-  { id: 'business', name: 'Business', price: 499, period: '/month', features: ['Everything in Pro', 'Forever save', 'Multi-company', 'Custom branding', 'API access', 'Dedicated support'], popular: false },
-];
+interface PricingPlan {
+  id: string;
+  name: string;
+  price: number;
+  period: string;
+  features: string[];
+  popular: boolean;
+}
 
 export default function Subscription() {
   const { user, loading } = useAuth();
   const [currentPlan, setCurrentPlan] = useState('free');
   const [processingPlan, setProcessingPlan] = useState<string | null>(null);
+  const [plans, setPlans] = useState<PricingPlan[]>([]);
+
+  useEffect(() => {
+    supabase.from('pricing_plans').select('*').eq('is_active', true).order('sort_order')
+      .then(({ data }) => { if (data) setPlans(data.map(p => ({ ...p, features: (p.features as any) || [] }))); });
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -30,7 +39,6 @@ export default function Subscription() {
       .then(({ data }) => { if (data) setCurrentPlan(data.plan); });
   }, [user]);
 
-  // Load Razorpay script
   useEffect(() => {
     if (document.getElementById('razorpay-script')) return;
     const script = document.createElement('script');
@@ -40,17 +48,14 @@ export default function Subscription() {
     document.body.appendChild(script);
   }, []);
 
-  const handleSubscribe = async (planId: string) => {
-    if (!user || planId === 'free' || planId === currentPlan) return;
-    setProcessingPlan(planId);
+  const handleSubscribe = async (plan: PricingPlan) => {
+    if (!user || plan.price === 0 || plan.name.toLowerCase() === currentPlan) return;
+    setProcessingPlan(plan.id);
+    const planName = plan.name.toLowerCase();
 
     try {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      if (!token) throw new Error('Not authenticated');
-
       const res = await supabase.functions.invoke('razorpay', {
-        body: { action: 'create_order', plan: planId },
+        body: { action: 'create_order', plan: planName, amount: plan.price * 100 },
       });
 
       if (res.error) throw new Error(res.error.message);
@@ -61,20 +66,20 @@ export default function Subscription() {
         amount: order.amount,
         currency: order.currency,
         name: 'InvoicePro Cloud',
-        description: `${planId.charAt(0).toUpperCase() + planId.slice(1)} Plan Subscription`,
+        description: `${plan.name} Plan Subscription`,
         order_id: order.id,
         handler: async (response: any) => {
           try {
             await supabase.functions.invoke('razorpay', {
               body: {
                 action: 'verify_payment',
-                plan: planId,
+                plan: planName,
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
               },
             });
-            setCurrentPlan(planId);
+            setCurrentPlan(planName);
             toast.success('Subscription activated! 🎉');
           } catch {
             toast.error('Payment verification failed');
@@ -120,30 +125,33 @@ export default function Subscription() {
         </div>
 
         <div className="grid sm:grid-cols-3 gap-6">
-          {plans.map(plan => (
-            <motion.div key={plan.id} whileHover={{ y: -4 }}
-              className={`rounded-2xl p-6 border ${plan.popular ? 'border-primary shadow-xl shadow-primary/10 ring-2 ring-primary/20' : 'border-border'} bg-card`}>
-              {plan.popular && <span className="inline-block text-xs font-bold text-primary bg-primary/10 rounded-full px-3 py-1 mb-3">Most Popular</span>}
-              <h3 className="text-xl font-bold">{plan.name}</h3>
-              <div className="mt-3 mb-6">
-                <span className="text-4xl font-extrabold">₹{plan.price}</span>
-                <span className="text-muted-foreground">{plan.period}</span>
-              </div>
-              <ul className="space-y-3 mb-6">
-                {plan.features.map(f => (
-                  <li key={f} className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-primary shrink-0" />{f}</li>
-                ))}
-              </ul>
-              <Button
-                className={`w-full ${plan.popular ? 'btn-3d bg-primary text-primary-foreground' : ''}`}
-                variant={plan.popular ? 'default' : 'outline'}
-                disabled={plan.id === currentPlan || plan.id === 'free' || !!processingPlan}
-                onClick={() => handleSubscribe(plan.id)}
-              >
-                {plan.id === currentPlan ? '✓ Current Plan' : processingPlan === plan.id ? 'Processing...' : plan.price === 0 ? 'Free Forever' : 'Subscribe Now'}
-              </Button>
-            </motion.div>
-          ))}
+          {plans.map(plan => {
+            const planKey = plan.name.toLowerCase();
+            return (
+              <motion.div key={plan.id} whileHover={{ y: -4 }}
+                className={`rounded-2xl p-6 border ${plan.popular ? 'border-primary shadow-xl shadow-primary/10 ring-2 ring-primary/20' : 'border-border'} bg-card`}>
+                {plan.popular && <span className="inline-block text-xs font-bold text-primary bg-primary/10 rounded-full px-3 py-1 mb-3">Most Popular</span>}
+                <h3 className="text-xl font-bold">{plan.name}</h3>
+                <div className="mt-3 mb-6">
+                  <span className="text-4xl font-extrabold">₹{plan.price}</span>
+                  <span className="text-muted-foreground">{plan.period}</span>
+                </div>
+                <ul className="space-y-3 mb-6">
+                  {plan.features.map(f => (
+                    <li key={f} className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-primary shrink-0" />{f}</li>
+                  ))}
+                </ul>
+                <Button
+                  className={`w-full ${plan.popular ? 'btn-3d bg-primary text-primary-foreground' : ''}`}
+                  variant={plan.popular ? 'default' : 'outline'}
+                  disabled={planKey === currentPlan || plan.price === 0 || !!processingPlan}
+                  onClick={() => handleSubscribe(plan)}
+                >
+                  {planKey === currentPlan ? '✓ Current Plan' : processingPlan === plan.id ? 'Processing...' : plan.price === 0 ? 'Free Forever' : 'Subscribe Now'}
+                </Button>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </div>

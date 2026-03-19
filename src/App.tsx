@@ -11,6 +11,7 @@ import TicketEditor from "./pages/TicketEditor";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import Admin from "./pages/Admin";
+import Subscription from "./pages/Subscription";
 import SEOPages from "./pages/SEOPages";
 import NotFound from "./pages/NotFound";
 

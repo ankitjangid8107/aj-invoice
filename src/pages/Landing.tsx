@@ -44,8 +44,8 @@ export default function Landing() {
               </Link>
             ) : (
               <>
-                <Link to="/auth"><Button variant="ghost" size="sm">Login</Button></Link>
-                <Link to="/auth"><Button size="sm" className="btn-3d bg-primary text-primary-foreground">Sign Up Free</Button></Link>
+                <Link to={user ? "/subscription" : "/auth"}><Button variant="ghost" size="sm">Login</Button></Link>
+                <Link to={user ? "/subscription" : "/auth"}><Button size="sm" className="btn-3d bg-primary text-primary-foreground">Sign Up Free</Button></Link>
               </>
             )}
           </div>
@@ -68,7 +68,7 @@ export default function Landing() {
               Create GST-compliant invoices, UPI payment receipts, and travel tickets in seconds. Export to PDF, PNG, Word. Works on all devices.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4">
-              <Link to="/auth">
+              <Link to={user ? "/subscription" : "/auth"}>
                 <Button size="lg" className="btn-3d bg-primary text-primary-foreground text-lg px-8 gap-2">
                   Start Free <ArrowRight className="w-5 h-5" />
                 </Button>
@@ -125,7 +125,7 @@ export default function Landing() {
                     <li key={f} className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-primary shrink-0" />{f}</li>
                   ))}
                 </ul>
-                <Link to="/auth">
+                <Link to={user ? "/subscription" : "/auth"}>
                   <Button className={`w-full ${plan.popular ? 'btn-3d bg-primary text-primary-foreground' : ''}`} variant={plan.popular ? 'default' : 'outline'}>
                     {plan.cta}
                   </Button>

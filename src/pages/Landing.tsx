@@ -120,7 +120,7 @@ export default function Landing() {
                 {plan.popular && <span className="inline-block text-xs font-bold text-primary bg-primary/10 rounded-full px-3 py-1 mb-3">Most Popular</span>}
                 <h3 className="text-xl font-bold">{plan.name}</h3>
                 <div className="mt-3 mb-6">
-                  <span className="text-4xl font-extrabold">{plan.price}</span>
+                  <span className="text-4xl font-extrabold">₹{plan.price}</span>
                   <span className="text-muted-foreground">{plan.period}</span>
                 </div>
                 <ul className="space-y-3 mb-6">

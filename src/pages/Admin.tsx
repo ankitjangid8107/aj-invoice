@@ -112,6 +112,7 @@ export default function Admin() {
           <TabsList className="mb-4">
             <TabsTrigger value="users" className="gap-1"><Users className="w-4 h-4" /> Users</TabsTrigger>
             <TabsTrigger value="settings" className="gap-1"><Settings className="w-4 h-4" /> Site Settings</TabsTrigger>
+            <TabsTrigger value="pricing" className="gap-1"><CreditCard className="w-4 h-4" /> Pricing</TabsTrigger>
             <TabsTrigger value="seo" className="gap-1"><FileText className="w-4 h-4" /> SEO & Ads</TabsTrigger>
           </TabsList>
 

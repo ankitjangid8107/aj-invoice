@@ -26,6 +26,7 @@ export default function Subscription() {
   const { user, loading } = useAuth();
   const [currentPlan, setCurrentPlan] = useState('free');
   const [processingPlan, setProcessingPlan] = useState<string | null>(null);
+  const [plans, setPlans] = useState<PricingPlan[]>([]);
 
   useEffect(() => {
     if (!user) return;

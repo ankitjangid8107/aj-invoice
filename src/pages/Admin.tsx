@@ -180,6 +180,10 @@ export default function Admin() {
             </div>
           </TabsContent>
 
+          <TabsContent value="pricing">
+            <AdminPricingManager />
+          </TabsContent>
+
           <TabsContent value="seo" className="space-y-6">
             <div className="glass-panel rounded-xl p-6 space-y-4">
               <h3 className="font-semibold">Google AdSense</h3>

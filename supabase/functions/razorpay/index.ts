@@ -29,11 +29,11 @@ serve(async (req) => {
     if (authError || !user) throw new Error('Unauthorized');
 
     const body = await req.json();
-    const { action, plan, razorpay_order_id, razorpay_payment_id, razorpay_signature } = body;
+    const { action, plan, razorpay_order_id, razorpay_payment_id, razorpay_signature, amount } = body;
 
     if (action === 'create_order') {
-      const amount = plan === 'pro' ? 19900 : plan === 'business' ? 49900 : 0;
-      if (amount === 0) throw new Error('Invalid plan');
+      const orderAmount = amount || (plan === 'pro' ? 19900 : plan === 'business' ? 49900 : 0);
+      if (orderAmount === 0) throw new Error('Invalid plan');
 
       const response = await fetch('https://api.razorpay.com/v1/orders', {
         method: 'POST',

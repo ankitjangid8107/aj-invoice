@@ -51,7 +51,8 @@ export default function Subscription() {
   }, []);
 
   const handleSubscribe = async (planId: string) => {
-    if (!user || planId === 'free' || planId === currentPlan) return;
+    if (!user || plan.price === 0 || plan.name.toLowerCase() === currentPlan) return;
+    setProcessingPlan(plan.id);
     setProcessingPlan(planId);
 
     try {

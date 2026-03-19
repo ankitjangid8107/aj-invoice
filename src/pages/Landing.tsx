@@ -1,8 +1,10 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { FileText, CreditCard, Ticket, Shield, Cloud, Smartphone, ArrowRight, Check } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 
 const features = [
   { icon: FileText, title: 'Invoice Generator', desc: 'Create professional GST invoices with Amazon-style templates. Export to PDF, PNG, Word.' },

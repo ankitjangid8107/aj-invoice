@@ -13,11 +13,14 @@ declare global {
   }
 }
 
-const plans = [
-  { id: 'free', name: 'Free', price: 0, period: '/forever', features: ['3 Invoices/month', '20-day save', 'PDF & PNG export', 'Basic templates'], popular: false },
-  { id: 'pro', name: 'Pro', price: 199, period: '/month', features: ['Unlimited Invoices', '90-day save', 'All export formats', 'Premium templates', 'Priority support'], popular: true },
-  { id: 'business', name: 'Business', price: 499, period: '/month', features: ['Everything in Pro', 'Forever save', 'Multi-company', 'Custom branding', 'API access', 'Dedicated support'], popular: false },
-];
+interface PricingPlan {
+  id: string;
+  name: string;
+  price: number;
+  period: string;
+  features: string[];
+  popular: boolean;
+}
 
 export default function Subscription() {
   const { user, loading } = useAuth();

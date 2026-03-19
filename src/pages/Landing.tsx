@@ -130,7 +130,7 @@ export default function Landing() {
                 </ul>
                 <Link to={user ? "/subscription" : "/auth"}>
                   <Button className={`w-full ${plan.popular ? 'btn-3d bg-primary text-primary-foreground' : ''}`} variant={plan.popular ? 'default' : 'outline'}>
-                    {plan.cta}
+                    {plan.price === 0 ? 'Get Started' : plan.popular ? 'Subscribe Now' : 'Subscribe'}
                   </Button>
                 </Link>
               </motion.div>

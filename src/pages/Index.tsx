@@ -5,7 +5,7 @@ import InvoiceEditor from '@/components/InvoiceEditor';
 import InvoicePreview from '@/components/InvoicePreview';
 import SavedInvoicesList from '@/components/SavedInvoicesList';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, List, Smartphone, User, Ticket, Shield } from 'lucide-react';
+import { FileText, List, Smartphone, User, Ticket, Shield, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { exportPNG, exportPDF } from '@/lib/exportUtils';
@@ -87,6 +87,9 @@ const Index = () => {
             </Link>
             <Link to="/ticket-editor">
               <Button variant="ghost" size="sm"><Ticket className="w-4 h-4 mr-1" /> <span className="hidden sm:inline">Ticket</span></Button>
+            </Link>
+            <Link to="/booking-cancelled">
+              <Button variant="ghost" size="sm"><XCircle className="w-4 h-4 mr-1" /> <span className="hidden sm:inline">Cancel</span></Button>
             </Link>
             {store.isAdmin && (
               <Link to="/admin">

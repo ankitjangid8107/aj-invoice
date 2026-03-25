@@ -145,9 +145,68 @@ export default function BookingCancelledEditor() {
   const { user, loading } = useAuth();
   const [data, setData] = useState<BookingCancelledData>({ ...defaultBookingCancelled });
   const [mobileView, setMobileView] = useState<'edit' | 'preview'>('edit');
+  const [savedList, setSavedList] = useState<{ id: string; data: BookingCancelledData }[]>([]);
+  const [showSaved, setShowSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
 
   const update = useCallback((u: Partial<BookingCancelledData>) => setData(p => ({ ...p, ...u, updatedAt: new Date().toISOString() })), []);
+
+  // Load saved list
+  const loadSaved = useCallback(async () => {
+    if (!user) return;
+    const { data: rows } = await supabase.from('saved_tickets')
+      .select('*').eq('user_id', user.id).eq('ticket_type', 'booking_cancelled')
+      .order('created_at', { ascending: false });
+    if (rows) setSavedList(rows.map((r: any) => ({ id: r.id, data: r.ticket_data as BookingCancelledData })));
+  }, [user]);
+
+  useEffect(() => { loadSaved(); }, [loadSaved]);
+
+  // Save to cloud
+  const handleSave = useCallback(async () => {
+    if (!user) return;
+    setSaving(true);
+    try {
+      // Check admin for expiry
+      const { data: roleData } = await supabase.from('user_roles').select('role').eq('user_id', user.id).eq('role', 'admin');
+      const isAdmin = roleData && roleData.length > 0;
+      
+      // Get save days setting
+      const { data: settingData } = await supabase.from('site_settings').select('value').eq('key', 'invoice_save_days').maybeSingle();
+      const saveDays = settingData ? Number(settingData.value) || 20 : 20;
+      
+      const expiresAt = isAdmin
+        ? new Date(Date.now() + 365 * 10 * 24 * 60 * 60 * 1000).toISOString()
+        : new Date(Date.now() + saveDays * 24 * 60 * 60 * 1000).toISOString();
+
+      // Upsert by order ID
+      const { data: existing } = await supabase.from('saved_tickets')
+        .select('id').eq('user_id', user.id).eq('ticket_type', 'booking_cancelled')
+        .eq('ticket_data->>orderId', data.orderId).maybeSingle();
+
+      if (existing) {
+        await supabase.from('saved_tickets').update({
+          ticket_data: data as any, expires_at: expiresAt,
+        }).eq('id', existing.id);
+      } else {
+        await supabase.from('saved_tickets').insert({
+          user_id: user.id, ticket_type: 'booking_cancelled',
+          ticket_data: data as any, expires_at: expiresAt,
+        });
+      }
+      await loadSaved();
+      toast.success('Saved to cloud!');
+    } catch { toast.error('Save failed'); }
+    setSaving(false);
+  }, [user, data, loadSaved]);
+
+  const handleDelete = useCallback(async (id: string) => {
+    if (!user) return;
+    await supabase.from('saved_tickets').delete().eq('id', id).eq('user_id', user.id);
+    await loadSaved();
+    toast.success('Deleted');
+  }, [user, loadSaved]);
 
   const handleExportPDF = async () => {
     if (!previewRef.current) return;

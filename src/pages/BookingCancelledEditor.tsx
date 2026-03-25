@@ -251,6 +251,28 @@ export default function BookingCancelledEditor() {
         </div>
       </header>
 
+      {/* Saved List Drawer */}
+      {showSaved && (
+        <div className="fixed inset-0 z-40 bg-black/40" onClick={() => setShowSaved(false)}>
+          <div className="absolute left-0 top-14 bottom-0 w-80 bg-card border-r border-border shadow-xl overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="p-4 space-y-3">
+              <h3 className="font-bold text-foreground">Saved Cancelled Tickets</h3>
+              {savedList.length === 0 && <p className="text-sm text-muted-foreground">No saved tickets yet</p>}
+              {savedList.map(item => (
+                <div key={item.id} className="border border-border rounded-lg p-3 space-y-2">
+                  <p className="text-sm font-semibold text-foreground truncate">{item.data.fromCity} → {item.data.toCity}</p>
+                  <p className="text-xs text-muted-foreground">Order: {item.data.orderId} | {item.data.passengerName}</p>
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="outline" className="flex-1" onClick={() => { setData(item.data); setShowSaved(false); toast.info('Loaded'); }}>Load</Button>
+                    <Button size="sm" variant="destructive" onClick={() => handleDelete(item.id)}><Trash2 className="w-3.5 h-3.5" /></Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-1">
         {/* Editor */}
         <div className={`w-full lg:w-[420px] xl:w-[460px] shrink-0 border-r border-border/50 bg-card/30 overflow-y-auto ${mobileView === 'preview' ? 'hidden lg:block' : ''}`}

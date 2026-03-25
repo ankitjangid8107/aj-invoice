@@ -5,11 +5,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Save, FileDown, FilePlus, ArrowLeft, Trash2, List } from 'lucide-react';
+import { Save, FileDown, FilePlus, Trash2, List } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { exportPDF, exportPNG } from '@/lib/exportUtils';
-import { Link, Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
+import AppNavbar from '@/components/AppNavbar';
 
 /* ── tiny helpers ───────────────────────────────────── */
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
@@ -225,31 +226,27 @@ export default function BookingCancelledEditor() {
   if (!user) return <Navigate to="/auth" replace />;
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 glass-panel-strong border-b border-border/50">
-        <div className="flex items-center justify-between px-3 h-14">
-          <div className="flex items-center gap-2">
-            <Link to="/"><Button variant="ghost" size="sm"><ArrowLeft className="w-4 h-4 mr-1" /> Back</Button></Link>
-            <h1 className="text-sm sm:text-lg font-bold gradient-text truncate">🚌 Booking Cancel Editor</h1>
-          </div>
+    <div className="min-h-screen bg-background pb-14 md:pb-0">
+      <AppNavbar />
+      {/* Sub-header */}
+      <div className="sticky top-14 z-40 border-b border-border/30 bg-background/60 backdrop-blur-md">
+        <div className="flex items-center justify-between px-4 h-10">
           <div className="flex items-center gap-1.5">
-            <Button onClick={handleSave} variant="default" size="sm" disabled={saving}>
-              <Save className="w-3.5 h-3.5 sm:mr-1" /><span className="hidden sm:inline">{saving ? 'Saving...' : 'Save'}</span>
+            <Button onClick={handleSave} size="sm" disabled={saving} className="h-7 text-xs bg-primary text-primary-foreground">
+              <Save className="w-3 h-3 mr-1" /> {saving ? 'Saving...' : 'Save'}
             </Button>
-            <Button onClick={() => setShowSaved(s => !s)} variant="outline" size="sm">
-              <List className="w-3.5 h-3.5 sm:mr-1" /><span className="hidden sm:inline">Saved</span>
+            <Button onClick={() => setShowSaved(s => !s)} variant="outline" size="sm" className="h-7 text-xs">
+              <List className="w-3 h-3 mr-1" /> Saved
             </Button>
-            <Button onClick={() => setData({ ...defaultBookingCancelled, id: crypto.randomUUID() })} variant="outline" size="sm" className="hidden sm:flex"><FilePlus className="w-3.5 h-3.5 mr-1" /> New</Button>
-            <Button onClick={handleExportPDF} variant="outline" size="sm"><FileDown className="w-3.5 h-3.5 sm:mr-1" /><span className="hidden sm:inline">PDF</span></Button>
-            <Button onClick={handleExportPNG} variant="outline" size="sm"><FileDown className="w-3.5 h-3.5 sm:mr-1" /><span className="hidden sm:inline">PNG</span></Button>
+            <Button onClick={() => setData({ ...defaultBookingCancelled, id: crypto.randomUUID() })} variant="outline" size="sm" className="hidden sm:flex h-7 text-xs"><FilePlus className="w-3 h-3 mr-1" /> New</Button>
+            <Button onClick={handleExportPDF} variant="outline" size="sm" className="h-7 text-xs"><FileDown className="w-3 h-3 mr-1" /> PDF</Button>
+            <Button onClick={handleExportPNG} variant="outline" size="sm" className="h-7 text-xs"><FileDown className="w-3 h-3 mr-1" /> PNG</Button>
           </div>
-          <div className="flex lg:hidden">
-            <Button variant="outline" size="sm" onClick={() => setMobileView(v => v === 'edit' ? 'preview' : 'edit')}>
-              {mobileView === 'edit' ? 'Preview' : 'Edit'}
-            </Button>
-          </div>
+          <Button variant="outline" size="sm" className="lg:hidden h-7 text-xs" onClick={() => setMobileView(v => v === 'edit' ? 'preview' : 'edit')}>
+            {mobileView === 'edit' ? 'Preview' : 'Edit'}
+          </Button>
         </div>
-      </header>
+      </div>
 
       {/* Saved List Drawer */}
       {showSaved && (
@@ -276,7 +273,7 @@ export default function BookingCancelledEditor() {
       <div className="flex flex-1">
         {/* Editor */}
         <div className={`w-full lg:w-[420px] xl:w-[460px] shrink-0 border-r border-border/50 bg-card/30 overflow-y-auto ${mobileView === 'preview' ? 'hidden lg:block' : ''}`}
-          style={{ height: 'calc(100vh - 56px)' }}>
+          style={{ height: 'calc(100vh - 96px)' }}>
           <div className="space-y-4 p-4">
             <Section title="Header">
               <Field label="Title" value={data.headerTitle} onChange={v => update({ headerTitle: v })} />

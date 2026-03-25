@@ -390,7 +390,7 @@ export default function TicketEditorPage() {
 
         {/* Preview */}
         <div className={`flex-1 overflow-y-auto bg-muted/30 ${mobileView === 'edit' ? 'hidden lg:block' : ''}`}
-          style={{ height: 'calc(100vh - 56px)' }}>
+          style={{ height: 'calc(100vh - 96px)' }}>
           <div className="p-4 lg:p-8 flex justify-center">
             <div className="shadow-2xl rounded-lg overflow-hidden">
               <TicketPreview ticket={ticket} previewRef={previewRef} />

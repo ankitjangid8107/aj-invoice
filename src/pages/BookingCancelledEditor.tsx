@@ -53,8 +53,8 @@ const BookingCancelledPreview = ({ data, previewRef }: { data: BookingCancelledD
             <span style={{ fontSize: 18 }}>🚌</span>
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ fontWeight: 700, fontSize: 14, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{data.operatorName}</p>
-            <p style={{ fontSize: 11, color: '#888', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{data.busDetails}</p>
+            <p style={{ fontWeight: 700, fontSize: 14, margin: 0, wordBreak: 'break-word', whiteSpace: 'normal' }}>{data.operatorName}</p>
+            <p style={{ fontSize: 11, color: '#888', margin: 0, wordBreak: 'break-word', whiteSpace: 'normal' }}>{data.busDetails}</p>
           </div>
         </div>
 

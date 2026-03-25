@@ -8,6 +8,7 @@ import Landing from "./pages/Landing";
 import Index from "./pages/Index";
 import PaymentReceipt from "./pages/PaymentReceipt";
 import TicketEditor from "./pages/TicketEditor";
+import BookingCancelledEditor from "./pages/BookingCancelledEditor";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import Admin from "./pages/Admin";
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/profile" element={<Profile />} />
             <Route path="/payment-receipt" element={<PaymentReceipt />} />
             <Route path="/ticket-editor" element={<TicketEditor />} />
+            <Route path="/booking-cancelled" element={<BookingCancelledEditor />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/subscription" element={<Subscription />} />
             <Route path="/privacy" element={<SEOPages />} />

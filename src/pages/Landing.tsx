@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { FileText, CreditCard, Ticket, Shield, Cloud, Smartphone, ArrowRight, Check } from 'lucide-react';
+import { FileText, CreditCard, Ticket, Shield, Cloud, Smartphone, ArrowRight, Check, XCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -10,6 +10,7 @@ const features = [
   { icon: FileText, title: 'Invoice Generator', desc: 'Create professional GST invoices with Amazon-style templates. Export to PDF, PNG, Word.' },
   { icon: CreditCard, title: 'Payment Receipt', desc: 'Generate UPI payment receipts instantly. Mobile-friendly exports.' },
   { icon: Ticket, title: 'Ticket Generator', desc: 'Create bus/travel e-tickets with complete traveller & fare details.' },
+  { icon: XCircle, title: 'Booking Cancel Generator', desc: 'Generate Paytm-style booking cancellation & refund receipts.' },
   { icon: Cloud, title: 'Cloud Storage', desc: 'All documents auto-saved to cloud. Access from any device, anytime.' },
   { icon: Shield, title: 'Secure & Private', desc: 'Bank-grade encryption. Your data stays yours. Role-based access control.' },
   { icon: Smartphone, title: 'Mobile Optimized', desc: 'Works perfectly on iOS & Android. Download bills on any device.' },

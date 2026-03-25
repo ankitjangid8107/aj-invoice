@@ -1,10 +1,11 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { BookingCancelledData, defaultBookingCancelled } from '@/types/bookingCancelled';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Save, FileDown, FilePlus, ArrowLeft, Bus, Copy } from 'lucide-react';
+import { Save, FileDown, FilePlus, ArrowLeft, Trash2, List } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { exportPDF, exportPNG } from '@/lib/exportUtils';

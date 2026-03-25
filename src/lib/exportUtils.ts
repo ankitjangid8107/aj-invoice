@@ -6,18 +6,31 @@ import jsPDF from 'jspdf';
  * Falls back to window.open for iOS Safari if needed.
  */
 function downloadBlob(blob: Blob, filename: string) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  a.style.display = 'none';
-  document.body.appendChild(a);
-  a.click();
-  // Cleanup after a delay to support iOS
-  setTimeout(() => {
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }, 1000);
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  
+  if (isIOS) {
+    // iOS Safari doesn't support download attribute — open in new tab
+    const url = URL.createObjectURL(blob);
+    const newTab = window.open(url, '_blank');
+    if (!newTab) {
+      // Popup blocked — fallback to same-window navigation
+      window.location.href = url;
+    }
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  } else {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 1000);
+  }
 }
 
 function dataURLtoBlob(dataURL: string): Blob {

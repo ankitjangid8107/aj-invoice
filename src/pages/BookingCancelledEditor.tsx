@@ -1,10 +1,11 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { BookingCancelledData, defaultBookingCancelled } from '@/types/bookingCancelled';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Save, FileDown, FilePlus, ArrowLeft, Bus, Copy } from 'lucide-react';
+import { Save, FileDown, FilePlus, ArrowLeft, Trash2, List } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { exportPDF, exportPNG } from '@/lib/exportUtils';
@@ -144,9 +145,68 @@ export default function BookingCancelledEditor() {
   const { user, loading } = useAuth();
   const [data, setData] = useState<BookingCancelledData>({ ...defaultBookingCancelled });
   const [mobileView, setMobileView] = useState<'edit' | 'preview'>('edit');
+  const [savedList, setSavedList] = useState<{ id: string; data: BookingCancelledData }[]>([]);
+  const [showSaved, setShowSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
 
   const update = useCallback((u: Partial<BookingCancelledData>) => setData(p => ({ ...p, ...u, updatedAt: new Date().toISOString() })), []);
+
+  // Load saved list
+  const loadSaved = useCallback(async () => {
+    if (!user) return;
+    const { data: rows } = await supabase.from('saved_tickets')
+      .select('*').eq('user_id', user.id).eq('ticket_type', 'booking_cancelled')
+      .order('created_at', { ascending: false });
+    if (rows) setSavedList(rows.map((r: any) => ({ id: r.id, data: r.ticket_data as BookingCancelledData })));
+  }, [user]);
+
+  useEffect(() => { loadSaved(); }, [loadSaved]);
+
+  // Save to cloud
+  const handleSave = useCallback(async () => {
+    if (!user) return;
+    setSaving(true);
+    try {
+      // Check admin for expiry
+      const { data: roleData } = await supabase.from('user_roles').select('role').eq('user_id', user.id).eq('role', 'admin');
+      const isAdmin = roleData && roleData.length > 0;
+      
+      // Get save days setting
+      const { data: settingData } = await supabase.from('site_settings').select('value').eq('key', 'invoice_save_days').maybeSingle();
+      const saveDays = settingData ? Number(settingData.value) || 20 : 20;
+      
+      const expiresAt = isAdmin
+        ? new Date(Date.now() + 365 * 10 * 24 * 60 * 60 * 1000).toISOString()
+        : new Date(Date.now() + saveDays * 24 * 60 * 60 * 1000).toISOString();
+
+      // Upsert by order ID
+      const { data: existing } = await supabase.from('saved_tickets')
+        .select('id').eq('user_id', user.id).eq('ticket_type', 'booking_cancelled')
+        .eq('ticket_data->>orderId', data.orderId).maybeSingle();
+
+      if (existing) {
+        await supabase.from('saved_tickets').update({
+          ticket_data: data as any, expires_at: expiresAt,
+        }).eq('id', existing.id);
+      } else {
+        await supabase.from('saved_tickets').insert({
+          user_id: user.id, ticket_type: 'booking_cancelled',
+          ticket_data: data as any, expires_at: expiresAt,
+        });
+      }
+      await loadSaved();
+      toast.success('Saved to cloud!');
+    } catch { toast.error('Save failed'); }
+    setSaving(false);
+  }, [user, data, loadSaved]);
+
+  const handleDelete = useCallback(async (id: string) => {
+    if (!user) return;
+    await supabase.from('saved_tickets').delete().eq('id', id).eq('user_id', user.id);
+    await loadSaved();
+    toast.success('Deleted');
+  }, [user, loadSaved]);
 
   const handleExportPDF = async () => {
     if (!previewRef.current) return;
@@ -173,6 +233,12 @@ export default function BookingCancelledEditor() {
             <h1 className="text-sm sm:text-lg font-bold gradient-text truncate">🚌 Booking Cancel Editor</h1>
           </div>
           <div className="flex items-center gap-1.5">
+            <Button onClick={handleSave} variant="default" size="sm" disabled={saving}>
+              <Save className="w-3.5 h-3.5 sm:mr-1" /><span className="hidden sm:inline">{saving ? 'Saving...' : 'Save'}</span>
+            </Button>
+            <Button onClick={() => setShowSaved(s => !s)} variant="outline" size="sm">
+              <List className="w-3.5 h-3.5 sm:mr-1" /><span className="hidden sm:inline">Saved</span>
+            </Button>
             <Button onClick={() => setData({ ...defaultBookingCancelled, id: crypto.randomUUID() })} variant="outline" size="sm" className="hidden sm:flex"><FilePlus className="w-3.5 h-3.5 mr-1" /> New</Button>
             <Button onClick={handleExportPDF} variant="outline" size="sm"><FileDown className="w-3.5 h-3.5 sm:mr-1" /><span className="hidden sm:inline">PDF</span></Button>
             <Button onClick={handleExportPNG} variant="outline" size="sm"><FileDown className="w-3.5 h-3.5 sm:mr-1" /><span className="hidden sm:inline">PNG</span></Button>
@@ -184,6 +250,28 @@ export default function BookingCancelledEditor() {
           </div>
         </div>
       </header>
+
+      {/* Saved List Drawer */}
+      {showSaved && (
+        <div className="fixed inset-0 z-40 bg-black/40" onClick={() => setShowSaved(false)}>
+          <div className="absolute left-0 top-14 bottom-0 w-80 bg-card border-r border-border shadow-xl overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="p-4 space-y-3">
+              <h3 className="font-bold text-foreground">Saved Cancelled Tickets</h3>
+              {savedList.length === 0 && <p className="text-sm text-muted-foreground">No saved tickets yet</p>}
+              {savedList.map(item => (
+                <div key={item.id} className="border border-border rounded-lg p-3 space-y-2">
+                  <p className="text-sm font-semibold text-foreground truncate">{item.data.fromCity} → {item.data.toCity}</p>
+                  <p className="text-xs text-muted-foreground">Order: {item.data.orderId} | {item.data.passengerName}</p>
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="outline" className="flex-1" onClick={() => { setData(item.data); setShowSaved(false); toast.info('Loaded'); }}>Load</Button>
+                    <Button size="sm" variant="destructive" onClick={() => handleDelete(item.id)}><Trash2 className="w-3.5 h-3.5" /></Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-1">
         {/* Editor */}

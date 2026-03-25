@@ -233,6 +233,12 @@ export default function BookingCancelledEditor() {
             <h1 className="text-sm sm:text-lg font-bold gradient-text truncate">🚌 Booking Cancel Editor</h1>
           </div>
           <div className="flex items-center gap-1.5">
+            <Button onClick={handleSave} variant="default" size="sm" disabled={saving}>
+              <Save className="w-3.5 h-3.5 sm:mr-1" /><span className="hidden sm:inline">{saving ? 'Saving...' : 'Save'}</span>
+            </Button>
+            <Button onClick={() => setShowSaved(s => !s)} variant="outline" size="sm">
+              <List className="w-3.5 h-3.5 sm:mr-1" /><span className="hidden sm:inline">Saved</span>
+            </Button>
             <Button onClick={() => setData({ ...defaultBookingCancelled, id: crypto.randomUUID() })} variant="outline" size="sm" className="hidden sm:flex"><FilePlus className="w-3.5 h-3.5 mr-1" /> New</Button>
             <Button onClick={handleExportPDF} variant="outline" size="sm"><FileDown className="w-3.5 h-3.5 sm:mr-1" /><span className="hidden sm:inline">PDF</span></Button>
             <Button onClick={handleExportPNG} variant="outline" size="sm"><FileDown className="w-3.5 h-3.5 sm:mr-1" /><span className="hidden sm:inline">PNG</span></Button>

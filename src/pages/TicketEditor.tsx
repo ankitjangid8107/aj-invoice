@@ -7,11 +7,12 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Trash2, Save, FileDown, FilePlus, ArrowLeft } from 'lucide-react';
+import { Plus, Trash2, Save, FileDown, FilePlus } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { exportPDF, exportPNG } from '@/lib/exportUtils';
-import { Link, Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
+import AppNavbar from '@/components/AppNavbar';
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="glass-panel rounded-xl p-4 space-y-3">
@@ -240,31 +241,27 @@ export default function TicketEditorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 glass-panel-strong border-b border-border/50">
-        <div className="flex items-center justify-between px-4 h-14">
-          <div className="flex items-center gap-2">
-            <Link to="/"><Button variant="ghost" size="sm"><ArrowLeft className="w-4 h-4 mr-1" /> Back</Button></Link>
-            <h1 className="text-lg font-bold gradient-text">🎫 Ticket Editor</h1>
+    <div className="min-h-screen bg-background pb-14 md:pb-0">
+      <AppNavbar />
+      {/* Sub-header */}
+      <div className="sticky top-14 z-40 border-b border-border/30 bg-background/60 backdrop-blur-md">
+        <div className="flex items-center justify-between px-4 h-10">
+          <div className="flex items-center gap-1.5">
+            <Button onClick={() => setTicket({ ...defaultTicket, id: crypto.randomUUID() })} variant="outline" size="sm" className="h-7 text-xs"><FilePlus className="w-3 h-3 mr-1" /> New</Button>
+            <Button onClick={saveTicket} size="sm" className="h-7 text-xs bg-primary text-primary-foreground"><Save className="w-3 h-3 mr-1" /> Save</Button>
+            <Button onClick={handleExportPDF} variant="outline" size="sm" className="h-7 text-xs"><FileDown className="w-3 h-3 mr-1" /> PDF</Button>
+            <Button onClick={handleExportPNG} variant="outline" size="sm" className="h-7 text-xs"><FileDown className="w-3 h-3 mr-1" /> PNG</Button>
           </div>
-          <div className="flex items-center gap-2">
-            <Button onClick={() => setTicket({ ...defaultTicket, id: crypto.randomUUID() })} variant="outline" size="sm"><FilePlus className="w-3.5 h-3.5 mr-1" /> New</Button>
-            <Button onClick={saveTicket} size="sm" className="btn-3d bg-primary text-primary-foreground"><Save className="w-3.5 h-3.5 mr-1" /> Save</Button>
-            <Button onClick={handleExportPDF} variant="outline" size="sm"><FileDown className="w-3.5 h-3.5 mr-1" /> PDF</Button>
-            <Button onClick={handleExportPNG} variant="outline" size="sm"><FileDown className="w-3.5 h-3.5 mr-1" /> PNG</Button>
-          </div>
-          <div className="flex lg:hidden">
-            <Button variant="outline" size="sm" onClick={() => setMobileView(v => v === 'edit' ? 'preview' : 'edit')}>
-              {mobileView === 'edit' ? 'Preview' : 'Edit'}
-            </Button>
-          </div>
+          <Button variant="outline" size="sm" className="lg:hidden h-7 text-xs" onClick={() => setMobileView(v => v === 'edit' ? 'preview' : 'edit')}>
+            {mobileView === 'edit' ? 'Preview' : 'Edit'}
+          </Button>
         </div>
-      </header>
+      </div>
 
       <div className="flex flex-1">
         {/* Editor */}
         <div className={`w-full lg:w-[420px] xl:w-[460px] shrink-0 border-r border-border/50 bg-card/30 overflow-y-auto ${mobileView === 'preview' ? 'hidden lg:block' : ''}`}
-          style={{ height: 'calc(100vh - 56px)' }}>
+          style={{ height: 'calc(100vh - 96px)' }}>
           <div className="space-y-4 p-4">
             <Section title="Contact & IDs">
               <div className="grid grid-cols-2 gap-2">
@@ -393,7 +390,7 @@ export default function TicketEditorPage() {
 
         {/* Preview */}
         <div className={`flex-1 overflow-y-auto bg-muted/30 ${mobileView === 'edit' ? 'hidden lg:block' : ''}`}
-          style={{ height: 'calc(100vh - 56px)' }}>
+          style={{ height: 'calc(100vh - 96px)' }}>
           <div className="p-4 lg:p-8 flex justify-center">
             <div className="shadow-2xl rounded-lg overflow-hidden">
               <TicketPreview ticket={ticket} previewRef={previewRef} />

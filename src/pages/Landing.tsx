@@ -35,7 +35,7 @@ export default function Landing() {
             <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center">
               <FileText className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold gradient-text">InvoicePro Cloud</span>
+            <span className="text-xl font-bold gradient-text">Aj-System Invoice Pro</span>
           </div>
           <div className="hidden md:flex items-center gap-6 text-sm text-muted-foreground">
             <a href="#features" className="hover:text-foreground transition">Features</a>
@@ -62,14 +62,14 @@ export default function Landing() {
         <div className="relative max-w-5xl mx-auto px-4 text-center">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-              🚀 #1 Invoice & Receipt Generator
+              🚀 Aj-System Invoice Pro · #1 Invoice & Receipt Generator
             </span>
             <h1 className="text-4xl sm:text-6xl font-extrabold leading-tight mb-6">
-              Professional <span className="gradient-text">Invoices</span>,<br />
-              Receipts & Tickets
+              <span className="gradient-text">Aj-System Invoice Pro</span><br />
+              Invoices, Receipts & Tickets
             </h1>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-              Create GST-compliant invoices, UPI payment receipts, and travel tickets in seconds. Export to PDF, PNG, Word. Works on all devices.
+              Create GST-compliant invoices, UPI payment receipts, bus tickets & cancellation bills in seconds. Export to PDF, PNG, Word. Built by Ankit Jangid.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4">
               <Link to={user ? "/subscription" : "/auth"}>
@@ -149,9 +149,9 @@ export default function Landing() {
                 <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
                   <FileText className="w-4 h-4 text-primary-foreground" />
                 </div>
-                <span className="font-bold">InvoicePro Cloud</span>
+                <span className="font-bold">Aj-System Invoice Pro</span>
               </div>
-              <p className="text-sm text-muted-foreground">Professional invoice & receipt generator for businesses of all sizes.</p>
+              <p className="text-sm text-muted-foreground">Aj-System Invoice Pro — professional GST invoice, UPI receipt & ticket generator. Built by Ankit Jangid.</p>
             </div>
             <div>
               <h4 className="font-semibold mb-3">Product</h4>
@@ -177,8 +177,9 @@ export default function Landing() {
               </ul>
             </div>
           </div>
-          <div className="border-t border-border mt-8 pt-6 text-center text-sm text-muted-foreground">
-            © {new Date().getFullYear()} InvoicePro Cloud. All rights reserved.
+          <div className="border-t border-border mt-8 pt-6 text-center text-sm text-muted-foreground space-y-1">
+            <p>© {new Date().getFullYear()} Aj-System Invoice Pro. All rights reserved.</p>
+            <p>Designed & developed by <span className="font-semibold text-foreground">Ankit Jangid</span> · Aj-System</p>
           </div>
         </div>
       </footer>

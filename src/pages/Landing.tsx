@@ -62,14 +62,14 @@ export default function Landing() {
         <div className="relative max-w-5xl mx-auto px-4 text-center">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-              🚀 #1 Invoice & Receipt Generator
+              🚀 Aj-System Invoice Pro · #1 Invoice & Receipt Generator
             </span>
             <h1 className="text-4xl sm:text-6xl font-extrabold leading-tight mb-6">
-              Professional <span className="gradient-text">Invoices</span>,<br />
-              Receipts & Tickets
+              <span className="gradient-text">Aj-System Invoice Pro</span><br />
+              Invoices, Receipts & Tickets
             </h1>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-              Create GST-compliant invoices, UPI payment receipts, and travel tickets in seconds. Export to PDF, PNG, Word. Works on all devices.
+              Create GST-compliant invoices, UPI payment receipts, bus tickets & cancellation bills in seconds. Export to PDF, PNG, Word. Built by Ankit Jangid.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4">
               <Link to={user ? "/subscription" : "/auth"}>

@@ -35,7 +35,7 @@ export default function Landing() {
             <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center">
               <FileText className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold gradient-text">InvoicePro Cloud</span>
+            <span className="text-xl font-bold gradient-text">Aj-System Invoice Pro</span>
           </div>
           <div className="hidden md:flex items-center gap-6 text-sm text-muted-foreground">
             <a href="#features" className="hover:text-foreground transition">Features</a>
@@ -149,9 +149,9 @@ export default function Landing() {
                 <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
                   <FileText className="w-4 h-4 text-primary-foreground" />
                 </div>
-                <span className="font-bold">InvoicePro Cloud</span>
+                <span className="font-bold">Aj-System Invoice Pro</span>
               </div>
-              <p className="text-sm text-muted-foreground">Professional invoice & receipt generator for businesses of all sizes.</p>
+              <p className="text-sm text-muted-foreground">Aj-System Invoice Pro — professional GST invoice, UPI receipt & ticket generator. Built by Ankit Jangid.</p>
             </div>
             <div>
               <h4 className="font-semibold mb-3">Product</h4>
@@ -177,8 +177,9 @@ export default function Landing() {
               </ul>
             </div>
           </div>
-          <div className="border-t border-border mt-8 pt-6 text-center text-sm text-muted-foreground">
-            © {new Date().getFullYear()} InvoicePro Cloud. All rights reserved.
+          <div className="border-t border-border mt-8 pt-6 text-center text-sm text-muted-foreground space-y-1">
+            <p>© {new Date().getFullYear()} Aj-System Invoice Pro. All rights reserved.</p>
+            <p>Designed & developed by <span className="font-semibold text-foreground">Ankit Jangid</span> · Aj-System</p>
           </div>
         </div>
       </footer>
